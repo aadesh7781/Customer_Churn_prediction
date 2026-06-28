@@ -16,20 +16,7 @@ Customer churn is one of the most critical business challenges faced by telecom 
 
 The project follows a complete machine learning workflow, including data preprocessing, exploratory data analysis (EDA), statistical feature selection, model comparison, hyperparameter tuning, and final model selection.
 
----
 
-## 📸 Project Banner
-
-> **Add Screenshot Here**
-
-**Recommended Image:**
-
-* A clean banner showing the project title with telecom/customer churn graphics.
-* Name the image: `banner.png`
-
-```text
-screenshots/banner.png
-```
 
 ---
 
@@ -114,20 +101,6 @@ Final Model
 
 ---
 
-# 📸 Workflow Diagram
-
-> **Add Screenshot Here**
-
-Recommended image:
-
-```
-workflow.png
-```
-
-A screenshot of your notebook workflow or a custom ML pipeline diagram.
-
----
-
 # 🧹 Data Preprocessing
 
 The following preprocessing steps were performed:
@@ -158,65 +131,8 @@ Analysis included:
 
 ---
 
-# 📸 EDA Visualizations
 
-### Target Variable Distribution
 
-> Add Screenshot
-
-```
-target_distribution.png
-```
-
----
-
-### Correlation Heatmap
-
-> Add Screenshot
-
-```
-heatmap.png
-```
-
----
-
-### ROC Curve
-
-> Add Screenshot
-
-```
-roc_curve.png
-```
-
----
-
-### Precision Recall Curve
-
-> Add Screenshot
-
-```
-precision_recall_curve.png
-```
-
----
-
-### Confusion Matrix
-
-> Add Screenshot
-
-```
-confusion_matrix.png
-```
-
----
-
-### Feature Importance
-
-> Add Screenshot
-
-```
-feature_importance.png
-```
 
 ---
 
@@ -336,8 +252,6 @@ Customer-Churn-Prediction/
 │     telco_churn_model.pkl
 │     scaler.pkl
 │
-├── screenshots/
-│
 ├── app.py
 │
 ├── requirements.txt
@@ -363,10 +277,6 @@ Customer-Churn-Prediction/
 # 📬 Contact
 
 **Aadesh Sharma**
-
-LinkedIn: *Add your LinkedIn profile*
-
-GitHub: *Add your GitHub profile*
 
 Email: Aadeshsharma1905@gmail.com
 
