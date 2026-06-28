@@ -5,15 +5,19 @@ import numpy as np
 import joblib
 import plotly.graph_objects as go
 
-
+# ---  ---
+# PAGE CONFIG
+# ---  ---
 st.set_page_config(
     page_title="Churn Predictor",
     page_icon="📊",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="collapsed",
 )
 
-
+# ---  ---
+# GLOBAL CSS  - dark glassmorphism theme
+# ---  ---
 st.markdown("""
 <style>
 /* -- Base -- */
@@ -54,6 +58,61 @@ html, body, [class*="css"] {
 .hero-title { font-size: 2rem; font-weight: 800; color: #fff; margin: 0; position: relative; }
 .hero-subtitle { font-size: 0.95rem; color: rgba(255,255,255,0.75); margin: 6px 0 0; position: relative; }
 
+/* -- MOBILE RESPONSIVE -- */
+@media (max-width: 768px) {
+    /* Hero header */
+    .hero-header { padding: 18px 16px; margin-bottom: 14px; }
+    .hero-title  { font-size: 1.25rem; }
+    .hero-subtitle { font-size: 0.78rem; }
+
+    /* KPI cards: 3 per row on mobile instead of 5 */
+    .kpi-wrap {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin-bottom: 14px;
+    }
+    .kpi-value { font-size: 1.1rem; }
+    .kpi-label { font-size: 0.65rem; letter-spacing: 0; }
+    .kpi-card  { padding: 10px 6px; }
+
+    /* Glass cards */
+    .glass-card { padding: 14px 12px; margin-bottom: 10px; }
+
+    /* Prediction badges */
+    .pred-title-high, .pred-title-low { font-size: 0.95rem; }
+    .pred-high, .pred-low { padding: 12px 14px; }
+
+    /* Summary grid - keep 2 col but tighter */
+    .summary-grid { gap: 6px; }
+    .summary-value { font-size: 0.82rem; }
+    .summary-label { font-size: 0.65rem; }
+
+    /* Factor bars */
+    .factor-name { font-size: 0.75rem; }
+    .factor-val  { font-size: 0.68rem; width: 30px; }
+
+    /* Rec/risk items */
+    .rec-item, .risk-item { font-size: 0.78rem; padding: 8px 10px; }
+
+    /* Section titles */
+    .section-title { font-size: 0.68rem; }
+
+    /* Hide hover effect on mobile (no hover) */
+    .glass-card:hover { transform: none; }
+
+    /* Streamlit block container padding */
+    .block-container { padding: 0.5rem 0.6rem 1rem !important; }
+
+    /* Streamlit columns - force full width stack */
+    [data-testid="column"] { min-width: 100% !important; width: 100% !important; }
+}
+
+@media (max-width: 480px) {
+    .kpi-wrap { grid-template-columns: repeat(3, 1fr); gap: 5px; }
+    .kpi-value { font-size: 1rem; }
+    .hero-title { font-size: 1.1rem; }
+}
+
 /* -- Glass Cards -- */
 .glass-card {
     background: rgba(255,255,255,0.05);
@@ -68,7 +127,7 @@ html, body, [class*="css"] {
 .glass-card:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,.35); }
 
 /* -- KPI Cards -- */
-.kpi-wrap { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+.kpi-wrap { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 20px; }
 .kpi-card {
     background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.10);
@@ -201,6 +260,23 @@ except Exception as e:
     MODEL_ERROR  = str(e)
 
 
+# ---  ---
+# FEATURE ENGINEERING  (mirrors notebook exactly)
+# ---  ---
+# Exact 28 columns the scaler/model was trained on (reproduced from notebook)
+# Binary cols (LabelEncoder): Senior Citizen, Partner, Dependents, Paperless Billing
+#   LabelEncoder alphabetical order: No=0, Yes=1
+# Multi cols (get_dummies, drop_first=True, base category = first alphabetically):
+#   Multiple Lines      base=No        -> _No phone service, _Yes
+#   Internet Service    base=DSL       -> _Fiber optic, _No
+#   Online Security     base=No        -> _No internet service, _Yes
+#   Online Backup       base=No        -> _No internet service, _Yes
+#   Device Protection   base=No        -> _No internet service, _Yes
+#   Tech Support        base=No        -> _No internet service, _Yes
+#   Streaming TV        base=No        -> _No internet service, _Yes
+#   Streaming Movies    base=No        -> _No internet service, _Yes
+#   Contract            base=Month-to-month -> _One year, _Two year
+#   Payment Method      base=Bank transfer  -> _Credit card, _Electronic check, _Mailed check
 
 EXPECTED_COLS = [
     "Senior Citizen",
@@ -422,6 +498,29 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
+# Mobile tip — only visible on small screens via CSS
+st.markdown("""
+<div class="mobile-tip">
+  ☰ Tap the <strong>arrow</strong> (top-left) to open the input panel
+</div>
+<style>
+.mobile-tip {
+    display: none;
+    background: rgba(99,102,241,0.15);
+    border: 1px solid rgba(99,102,241,0.35);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 0.8rem;
+    color: #a5b4fc;
+    margin-bottom: 12px;
+    text-align: center;
+}
+@media (max-width: 768px) {
+    .mobile-tip { display: block; }
+}
+</style>
+""", unsafe_allow_html=True)
+
 
 # ---  ---
 # MODEL STATUS & KPI ROW
@@ -444,7 +543,7 @@ for label, val in kpis:
     </div>"""
 kpi_html += "</div>"
 st.markdown(kpi_html, unsafe_allow_html=True)
-st.markdown("<br>", unsafe_allow_html=True)
+st.markdown("<div style='margin-bottom:8px'></div>", unsafe_allow_html=True)
 
 
 # ---  ---
@@ -470,9 +569,9 @@ reasons, actions = generate_recommendation(internet, contract, payment, tenure, 
 
 
 # ---  ---
-# MAIN LAYOUT  - two-column
+# MAIN LAYOUT  - responsive (stacks on mobile via CSS)
 # ---  ---
-left, right = st.columns([1, 1], gap="large")
+left, right = st.columns([1, 1], gap="medium")
 
 # --- LEFT: Gauge + Prediction + Customer Summary ---
 with left:
@@ -543,7 +642,9 @@ with left:
     st.markdown("</div>", unsafe_allow_html=True)
 
 
+# --- RIGHT: Feature Contribution + Recommendation ---
 with right:
+    # Feature Contribution
     st.markdown('<div class="glass-card">', unsafe_allow_html=True)
     st.markdown('<div class="section-title">📈 Top Churn Factors</div>', unsafe_allow_html=True)
 
@@ -585,6 +686,7 @@ with right:
         st.markdown('<div class="rec-item">✅ No major risk factors identified. Continue monitoring customer satisfaction.</div>', unsafe_allow_html=True)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 st.markdown("---")
