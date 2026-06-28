@@ -15,9 +15,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# ---  ---
-# GLOBAL CSS  - dark glassmorphism theme
-# ---  ---
+
 st.markdown("""
 <style>
 /* -- Base -- */
@@ -60,57 +58,80 @@ html, body, [class*="css"] {
 
 /* -- MOBILE RESPONSIVE -- */
 @media (max-width: 768px) {
-    /* Hero header */
-    .hero-header { padding: 18px 16px; margin-bottom: 14px; }
-    .hero-title  { font-size: 1.25rem; }
-    .hero-subtitle { font-size: 0.78rem; }
-
-    /* KPI cards: 3 per row on mobile instead of 5 */
-    .kpi-wrap {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 8px;
-        margin-bottom: 14px;
+    /* Fix Streamlit main block padding so nothing overlaps */
+    .block-container {
+        padding-top: 0.5rem !important;
+        padding-left: 0.6rem !important;
+        padding-right: 0.6rem !important;
+        max-width: 100% !important;
     }
-    .kpi-value { font-size: 1.1rem; }
-    .kpi-label { font-size: 0.65rem; letter-spacing: 0; }
-    .kpi-card  { padding: 10px 6px; }
+
+    /* Hero header — smaller, no overlap */
+    .hero-header {
+        padding: 14px 14px 16px 14px;
+        margin-bottom: 10px;
+        border-radius: 12px;
+    }
+    .hero-title    { font-size: 1.1rem; line-height: 1.3; }
+    .hero-subtitle { font-size: 0.72rem; margin-top: 4px; }
+
+    /* KPI cards — 2 per row on mobile, readable numbers */
+    .kpi-wrap {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+        margin-bottom: 12px;
+    }
+    .kpi-card  { padding: 12px 8px; border-radius: 10px; }
+    .kpi-value { font-size: 1.3rem; }
+    .kpi-label { font-size: 0.62rem; letter-spacing: 0; margin-bottom: 4px; }
+    .kpi-bar   { margin-top: 8px; }
 
     /* Glass cards */
-    .glass-card { padding: 14px 12px; margin-bottom: 10px; }
+    .glass-card { padding: 12px 10px; margin-bottom: 10px; border-radius: 10px; }
+    .glass-card:hover { transform: none; }
 
     /* Prediction badges */
-    .pred-title-high, .pred-title-low { font-size: 0.95rem; }
-    .pred-high, .pred-low { padding: 12px 14px; }
+    .pred-title-high, .pred-title-low { font-size: 1rem; }
+    .pred-sub { font-size: 0.75rem; }
+    .pred-high, .pred-low { padding: 14px 12px; }
 
-    /* Summary grid - keep 2 col but tighter */
-    .summary-grid { gap: 6px; }
-    .summary-value { font-size: 0.82rem; }
-    .summary-label { font-size: 0.65rem; }
+    /* Summary grid */
+    .summary-grid  { gap: 8px; }
+    .summary-value { font-size: 0.85rem; }
+    .summary-label { font-size: 0.62rem; }
 
     /* Factor bars */
-    .factor-name { font-size: 0.75rem; }
-    .factor-val  { font-size: 0.68rem; width: 30px; }
+    .factor-name { font-size: 0.76rem; }
+    .factor-val  { font-size: 0.68rem; width: 32px; }
 
     /* Rec/risk items */
     .rec-item, .risk-item { font-size: 0.78rem; padding: 8px 10px; }
 
     /* Section titles */
-    .section-title { font-size: 0.68rem; }
+    .section-title { font-size: 0.68rem; margin-bottom: 8px; }
 
-    /* Hide hover effect on mobile (no hover) */
-    .glass-card:hover { transform: none; }
+    /* Streamlit columns stack vertically */
+    [data-testid="column"] {
+        min-width: 100% !important;
+        width: 100% !important;
+        flex: 1 1 100% !important;
+    }
 
-    /* Streamlit block container padding */
-    .block-container { padding: 0.5rem 0.6rem 1rem !important; }
-
-    /* Streamlit columns - force full width stack */
-    [data-testid="column"] { min-width: 100% !important; width: 100% !important; }
+    /* Tighten gap between stacked columns */
+    [data-testid="stHorizontalBlock"] {
+        flex-wrap: wrap !important;
+        gap: 0 !important;
+    }
 }
 
 @media (max-width: 480px) {
-    .kpi-wrap { grid-template-columns: repeat(3, 1fr); gap: 5px; }
-    .kpi-value { font-size: 1rem; }
-    .hero-title { font-size: 1.1rem; }
+    .hero-title  { font-size: 1rem; }
+    .kpi-value   { font-size: 1.15rem; }
+    .kpi-label   { font-size: 0.58rem; }
+    .block-container {
+        padding-left: 0.4rem !important;
+        padding-right: 0.4rem !important;
+    }
 }
 
 /* -- Glass Cards -- */
@@ -538,7 +559,7 @@ for label, val in kpis:
     kpi_html += f"""
     <div class="kpi-card">
         <div class="kpi-label">{label}</div>
-        <div class="kpi-value">{val:.2f}%</div>
+        <div class="kpi-value">{val:.1f}<span style="font-size:0.65em;font-weight:600;opacity:0.7">%</span></div>
         <div class="kpi-bar"><div class="kpi-bar-fill" style="width:{fill}%"></div></div>
     </div>"""
 kpi_html += "</div>"
@@ -642,7 +663,6 @@ with left:
     st.markdown("</div>", unsafe_allow_html=True)
 
 
-# --- RIGHT: Feature Contribution + Recommendation ---
 with right:
     # Feature Contribution
     st.markdown('<div class="glass-card">', unsafe_allow_html=True)
