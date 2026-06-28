@@ -15,7 +15,9 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-
+# ---  ---
+# GLOBAL CSS  - dark glassmorphism theme
+# ---  ---
 st.markdown("""
 <style>
 /* -- Base -- */
@@ -551,7 +553,7 @@ if not MODEL_LOADED:
     st.stop()
 
 # Static KPI values from your tuned LR
-kpis = [("Accuracy", 79.74), ("Precision", 67.82), ("Recall", 58.34), ("F1 Score", 62.74), ("ROC-AUC", 84.23)]
+kpis = [("Accuracy", 79.74), ("Precision", 60.32), ("Recall", 69.52), ("F1 Score", 64.60), ("ROC-AUC", 83.84)]
 
 kpi_html = '<div class="kpi-wrap">'
 for label, val in kpis:
@@ -663,6 +665,7 @@ with left:
     st.markdown("</div>", unsafe_allow_html=True)
 
 
+# --- RIGHT: Feature Contribution + Recommendation ---
 with right:
     # Feature Contribution
     st.markdown('<div class="glass-card">', unsafe_allow_html=True)
@@ -708,7 +711,9 @@ with right:
     st.markdown("</div>", unsafe_allow_html=True)
 
 
-
+# ---  ---
+# FOOTER
+# ---  ---
 st.markdown("---")
 st.markdown(
     "<div style='text-align:center;font-size:0.75rem;color:#475569;padding:8px 0;'>"
